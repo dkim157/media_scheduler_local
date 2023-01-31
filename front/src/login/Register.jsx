@@ -11,7 +11,8 @@ export const Register = (props) => {
             const response = await axios.post('http://localhost:5000/login', {
                     email: email,
                     name: name,
-                    pass: pass
+                    pass: pass,
+                    flag: 'register'
                 });
             return response.data; 
         }
@@ -19,7 +20,7 @@ export const Register = (props) => {
             console.log(error);
             return false;
         }
-      }
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();

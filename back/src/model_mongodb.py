@@ -35,12 +35,12 @@ class User(Model):
     # with <atlas-user>, <password> and <myFirstDatabase> updated accordingly
     # make sure .env is in .gitignore so that your password isn't relased into the wild
 
-    # load_dotenv()  # take environment variables from .env.
-    # MONGODB_URI = os.environ['MONGODB_URI']
-    # db_client = pymongo.MongoClient(MONGODB_URI)
+    #load_dotenv()  # take environment variables from .env.
+    #MONGODB_URI = os.environ['MONGODB_URI']
+    #db_client = pymongo.MongoClient(MONGODB_URI)
 
     db_client = pymongo.MongoClient('localhost', 27017)  #change if your db is in another host and port
-    collection = db_client["users"]["users_list"]  #db name is 'users' and collection name is 'users_list'
+    collection = db_client["scheduler"]["users"]  #db name is 'scheduler' and collection name is 'users'
 
     def find_all(self):
         users = list(self.collection.find())
@@ -48,12 +48,12 @@ class User(Model):
             user["_id"] = str(user["_id"])
         return users
 
-    """def find_by_name(self, name):
-        users = list(self.collection.find({"name": name}))
+    def find_by_email(self, email):
+        users = list(self.collection.find({"email": email}))
         for user in users:
             user["_id"] = str(user["_id"])
         return users
-        
+    """   
     def find_by_job(self, job):
         users = list(self.collection.find({"job": job}))
         for user in users:

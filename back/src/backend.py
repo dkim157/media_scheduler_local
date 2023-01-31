@@ -5,7 +5,7 @@ import json
 # for linking frontend-backend
 from flask_cors import CORS
 # for mongo db
-# from model_mongodb import User
+from model_mongodb import User
 
 app = Flask(__name__)
 # CORS stands for Cross Origin Requests.
@@ -15,6 +15,27 @@ CORS(app)
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
+
+def register(request):
+    user = request.get_json()
+    user_exists = User().find_by_email(user.get('email'))
+    if user_exists:
+        return jsonify("email already in use"), 201
+    else:
+        # create new user
+        newUser = User(user)
+        newUser.save()
+        return jsonify(newUser), 201
+
+def login(request):
+    user = request.get_json()
+    user_exists = User().find_by_email(user.get('email'))
+    if user_exists:
+        # check password match
+        return jsonify(user['pass'] == user_exists[0]['pass']), 201
+    else:
+        return jsonify("email not registered"), 201
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def get_users():
@@ -32,17 +53,11 @@ def get_users():
     #        users = User().find_all()
     #    return {"users_list": users}
     if request.method == 'POST':
-        resp = request.get_json()
-        return resp['name']
-        # userToAdd['id'] = gen_random_id() # check for duplicate before appending.. todo
-        # users['users_list'].append(userToAdd)
-        # updated for db_access
-        # make DB request to add user
-        # newUser = User(userToAdd)
-        # newUser.save()
-        # resp = jsonify(newUser), 201
-        # return resp
-
+        if request.get_json()['flag'] == 'login':
+            return login(request)
+        elif request.get_json()['flag'] == 'register':
+            return register(request)
+        else: return jsonify({"error": "not a login or regstration"}), 400
 
 #@app.route('/users/<id>', methods=['GET', 'DELETE'])
 #def get_user(id):
